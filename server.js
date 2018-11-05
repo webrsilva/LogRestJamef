@@ -44,9 +44,6 @@ app.get('/banco', function (req, res) {
             })
         }
     })
-
-
-
 })
 
 
@@ -86,7 +83,6 @@ function salvarMongo(dados, response) {
                 client.close()
 
             })
-
         }
     })
 
@@ -98,8 +94,6 @@ function trataDados(dDados) {
 
         dDados.body = JSON.stringify(dDados.body)
     }
-
-
     return (dDados)
 }
 
