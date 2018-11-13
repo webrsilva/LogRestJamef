@@ -46,7 +46,6 @@ app.get('/banco', function (req, res) {
     })
 })
 
-
 function enviaDados(dados) {
 
     console.log(dados.url)
@@ -64,7 +63,6 @@ function enviaDados(dados) {
 
         })
 }
-
 
 function salvarMongo(dados, response) {
 
@@ -92,19 +90,24 @@ function trataDados(dDados) {
 
     if (typeof (dDados.body) == 'object') {
 
-        dDados.body = JSON.stringify(dDados.body)
+        dDados.body = JSON.stringify(dDados.body, null, 4)
     }
     return (dDados)
 }
 
-
 const insertMongo = function (db, dados, response, callback) {
 
+    var dathora = formatadata(new Date())
+
     db.collection('logs').insertOne({
+                                        metodo: "post",
+                                        fornecedor: dados.fornecedor,
                                         url: dados.url,
-                                        body: dados.body,
-                                        resposta: response.status,
-                                        datetime: new Date()
+                                        body_env: dados.body,
+                                        cod_ret: response.status,
+                                        body_resp:"response",
+                                        rotina: dados.fonte,
+                                        datetime: dathora,
                                     }, function (err, result) {
         if (err) {
             console.log(err)
@@ -114,7 +117,26 @@ const insertMongo = function (db, dados, response, callback) {
     });
 }
 
-
 app.listen(PORT, function () {
     console.log(`Ouvindo a porta : ${PORT}`)
 })
+
+function formatadata(dataHora) {
+    var dia = dataHora.getDate();
+    var mes = dataHora.getMonth()+1;
+    var ano = dataHora.getFullYear();
+    var hora = dataHora.getHours();
+    var min = dataHora.getMinutes();
+    var sec = dataHora.getSeconds();
+
+    if(dia.toString().length == 1) dia = '0'+dia;
+    if(mes.toString().length == 1) mes = '0'+mes;
+
+    if (hora.toString().length == 1) hora = '0' + hora;
+    if (min.toString().length == 1) min = '0' + min;
+    if (sec.toString().length == 1) sec = '0' + sec;
+
+    //console.log(dateFormat(dataHora, "dd/mm/yyyy, HH:MM:ss"))
+
+    return dia+'/'+mes+'/'+ano+' '+hora+':'+min+':'+sec;
+}
